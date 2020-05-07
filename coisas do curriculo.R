@@ -1,12 +1,14 @@
-#### Coisas do currículo
+#### Coisas do curriculo
+library(tidyverse)
+library(ggiraph)
+library(ggiraphExtra)
+setwd("~/Curriculo")
 
-setwd("~/Currículo")
-
-# Gráfico habilidades -----------------------------------------------------
+# Grafico habilidades -----------------------------------------------------
 
 # infos
 data=data.frame(
-  individual= rev(c("R","SAS","SQL","Python","Statistics","Text-mining",
+  individual= rev(c("R","Python","SQL","SAS","Statistics","Text-mining",
                     "Data\nvisualization",
                     "Machine\nlearning","Web\nScraping")),
   group=rev(c( rep('Tools', 4), rep('Skills', 5))) ,
@@ -102,39 +104,42 @@ ggsave(filename = "habilidades.png",dpi=450,height = 5.5,width = 6,bg="transpare
 library(dplyr)
 library(ggiraph)
 
-dt_anos = data_frame(x=2015:2019,y = 0)
+dt_anos = data_frame(x=2015:2020,y = 0)
 
-data_frame(x=c(2015,2016.5,2016.6,2017.6,2018.2,2018.6),
-           y = c(.12,-.12,.12,-.26,.12,-.12),
-           y2=c(.22,-.22,.22,-.36,.22,-.22),
-           descri= c("Moura Rocha Paraffins\n2015-2016\nAdministrative advisor",
-                     "Estats Consulting Jr\n2016-2017\nMarketing advisor",
-                     "State University of Maringá\n2016-2018\nProbability/inference monitor",
-                     "Estats Consulting Jr\n2017-2018\nPresident",
-                     "Trecsson Bussines\n2018-2018\nCommercial analyst intern",
-                     "H0 consulting\n2018-2019\nStatistical intern"))%>%
-ggplot(aes(x,y))+
+linha <- 
+  data_frame(x = c(2015,2016.5,2016.6,2017.6,2018.2,2018.6,2019.6),
+           y = c(.12,-.12,.12,-.26,.12,-.12, .12),
+           y2 = c(.22,-.22,.22,-.36,.22,-.22, .22),
+           name = c("Moura Rocha Paraffins\n2015-2016",
+                     "Estats Consulting Jr\n2016-2017",
+                     "State University\nof MaringÃ¡\n2016-2018",
+                     "Estats Consulting Jr\n2017-2018",
+                     "Trecsson Bussines\n2018-2018",
+                     "H0 consulting\n2018-2019",
+                     "Mapi/Isket \n2019-Today"),
+           descr = c("Administrative advisor", "Marketing advisor", "Probability/inference monitor",
+                     "President", "Commercial analyst intern", "Statistical intern", "Data Scientist")) %>%
+  ggplot(aes(x,y))+
   #ggPoints(interactive=TRUE)+
-  geom_segment(aes(xend = x,y =0, yend=(y)),size=1.3,col="grey60")+
-  geom_hline(yintercept = 0,size=2)+
-  geom_label(data=dt_anos,aes(x=x,y,label=x),fontface=2)+
-  geom_label(aes(x=x,y=y2,label=descri),fill= NA,colour = "black",
-             label.size = NA, fontface=2,size=3.1)+
-  geom_point_interactive(aes(data_id = descri,tooltip = descri),size=5,col='#F8766D')+
-  theme_minimal()+
+  geom_segment(aes(xend = x,y =0, yend=(y)),size=1.3,col="grey60") +
+  geom_hline(yintercept = 0,size=2) +
+  geom_label(data=dt_anos,aes(x=x,y,label=x),fontface=2) +
+  geom_label(aes(x=x,y=y2,label=name),fill= NA,colour = "black",
+             label.size = NA, fontface=2,size=3.1) +
+  geom_point_interactive(aes(x,y, tooltip = descr, data_id = descr), size=5, col='#F8766D') +
+  theme_minimal() +
   theme(axis.title = element_blank(),
         axis.text = element_blank(),
-        panel.grid = element_blank())+
-  ylim(c(-.4,.4))+xlim(c(2014.5,2019.5))->linha
+        panel.grid = element_blank()) +
+  ylim(c(-.4,.4)) + xlim(c(2014.5,2020.5))
 
 ggsave("Linha_teste2.png",linha,dpi=450,height = 3.6,width = 7.5,bg="transparent")
 
 linha2 <- girafe(ggobj = linha )
+
 final = girafe_options(linha2, opts_hover(css = "fill:#00BFC4;stroke:#00BFC4;r:10pt;transition: 0.3s"),
                opts_tooltip(css = "background-color:gray;color:white;font-style:oblique;padding:10px;border-radius:5px;transition: 0.5s;"),
                opts_sizing(rescale = T,width =  1))
 
-htmlwidgets::saveWidget( final, "test.html" )
-
-
+htmlwidgets::saveWidget( final, "timeline.html" )
 
